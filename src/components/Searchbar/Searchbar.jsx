@@ -1,34 +1,35 @@
-import React, { Component } from 'react'
-import Select from 'react-select'
-import { fetchImages } from '../api'
+import React from 'react';
+import PropTypes from 'prop-types';
 
+const Searchbar = ({ onSubmit }) => {
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const form = event.target;
+    const input = form.querySelector('input');
+    onSubmit(input.value);
+  };
 
-export class Searchbar extends Component {
-    state = {
-        images:[]
-    }
-    async componentDidMount() {
-        try {
-            const fetchedImages = await fetchImages()
-            this.setState({ images: fetchedImages });
-        } catch (error) {
-            
-        }
-    }
-    render() {
-        const options = this.state.images.map(image => {
-            return {
-                value: image.id,
-                label: image.webformatURL,
-            };
-        });
-        console.log(options);
+  return (
+    <header className="searchbar">
+      <form className="form" onSubmit={handleSubmit}>
+        <button type="submit" className="button">
+          <span className="button-label">Search</span>
+        </button>
 
-        return <div>
-            <Select options={options} onChange={option => {
-                console.log(option);
-            }} />
+        <input
+          className="input"
+          type="text"
+          autoComplete="off"
+          autoFocus
+          placeholder="Search images and photos"
+        />
+      </form>
+    </header>
+  );
+};
 
-        </div>
-    }
-}
+Searchbar.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
+};
+
+export default Searchbar;
