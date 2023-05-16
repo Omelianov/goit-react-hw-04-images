@@ -1,17 +1,13 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 
-const Button = ({ onClick, disabled }) => {
-  return (
-    <button className="Button" onClick={onClick} disabled={disabled}>
-      Load more
-    </button>
-  );
+export const Button = ({ text, type, loadMoreImages }) => {
+    return (
+        <button type={type} className="Button" onClick={loadMoreImages}>{text}</button>
+    );
 };
 
 Button.propTypes = {
-  onClick: PropTypes.func.isRequired,
-  disabled: PropTypes.bool.isRequired,
+    text: PropTypes.string.isRequired,
+    type: PropTypes.string.isRequired,
+    loadMoreImages: PropTypes.func.isRequired,
 };
-
-export default Button;

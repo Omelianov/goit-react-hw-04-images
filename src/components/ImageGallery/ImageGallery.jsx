@@ -1,17 +1,20 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import { ImageGalleryItem } from "../ImageGalleryItem/ImageGalleryItem";
 
-const ImageGalleryItem = ({ imageUrl, alt }) => {
-  return (
-    <li className="gallery-item">
-      <img src={imageUrl} alt={alt} />
-    </li>
-  );
+export const ImageGallery = ({ allImages, ...otherProps }) => {
+    return (
+        <section>
+            <ul className="ImageGallery">
+                {allImages.map(oneImage => (
+                    <li className="ImageGalleryItem" key={oneImage.id}>
+                        <ImageGalleryItem image={oneImage} {...otherProps} />
+                    </li>
+                ))}
+            </ul>
+        </section >
+    );
 };
 
-ImageGalleryItem.propTypes = {
-  imageUrl: PropTypes.string.isRequired,
-  alt: PropTypes.string.isRequired,
+ImageGallery.propTypes = {
+    allImages: PropTypes.array.isRequired,
 };
-
-export default ImageGalleryItem;

@@ -1,11 +1,20 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 
-const ImageGalleryItem = ({ image }) => {
-  return (
-    <li className="gallery-item">
-      <img src={image.webformatURL} alt="" />
-    </li>
-  );
+export const ImageGalleryItem = ({ image: { tags, webformatURL, largeImageURL }, onToggleModal }) => {
+    return (
+        <img className="ImageGalleryItem-image"
+        src={webformatURL}
+        data-source={largeImageURL}
+        alt={tags}
+        onClick={onToggleModal} />
+    );
 };
 
-export default ImageGalleryItem;
+ImageGalleryItem.propTypes = {
+    image: PropTypes.shape({
+        webformatURL: PropTypes.string.isRequired,
+        largeImageURL: PropTypes.string.isRequired,
+        tags: PropTypes.string.isRequired,
+    }).isRequired,
+    onToggleModal: PropTypes.func.isRequired,
+};
