@@ -7,7 +7,7 @@ import { Button } from './Button/Button';
 import {Modal} from './Modal/Modal';
 import { ErrorImg } from "./ErrorImg/ErrorImg";
 import { MagnifyingGlass } from 'react-loader-spinner';
-import { fetchImages } from "./api";
+import { fetchImages } from "../api";
 import img from '../images/img-not-found.jpg'
 export class App extends Component {
   state = {
