@@ -1,28 +1,25 @@
 
-
+import { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
 
-export class Modal extends Component {
-    static propTypes = {
-        data: PropTypes.shape({
-            source: PropTypes.string.isRequired,
-            alt: PropTypes.string.isRequired,
-        }).isRequired,
-        onToggleModal: PropTypes.func.isRequired,
-    };
 
-    componentDidMount() {
-        const { onToggleModal } = this.props;
-        window.addEventListener("keydown", onToggleModal);
-    };
-    componentWillUnmount() {
-        const { onToggleModal } = this.props;
-        window.removeEventListener("keydown", onToggleModal);
-    };
+export const Modal = ({data, onToggleModal}) =>  {
+    const [source, alt] = data;
 
-    render() {
-    const { data: { source, alt }, onToggleModal } = this.props;
+
+    useEffect(() => {
+      const handleKeyDown = (event) => {
+        if (event.key === 'Escape') {
+            onToggleModal();
+        }
+      };
+      window.addEventListener("keydown", handleKeyDown);
+    
+      return () => {
+        window.removeEventListener("keydown", handleKeyDown);
+      };
+    }, [onToggleModal]);
+
         return (
             <div className="Overlay" onClick={onToggleModal}>
                 <div className="Modal">
@@ -31,4 +28,11 @@ export class Modal extends Component {
             </div>
         );
     };
-};
+
+    Modal.propTypes = {
+        data: PropTypes.shape({
+            source: PropTypes.string.isRequired,
+            alt: PropTypes.string.isRequired,
+        }).isRequired,
+        onToggleModal: PropTypes.func.isRequired,
+    };

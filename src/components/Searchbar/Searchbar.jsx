@@ -1,17 +1,11 @@
 import PropTypes from 'prop-types';
-import { Component } from "react";
+import { useState } from "react";
 
-export class Searchbar extends Component {
-    static propTypes = {
-        onSubmit: PropTypes.func.isRequired,
-        toastInfo: PropTypes.func.isRequired,
-    };
+export const Searchbar =() => {
+   const [text, setText] = useState('')
     
-    state = {
-        text: '',
-    };
 
-    typeNewSearch = (event) => {
+   const typeNewSearch = (event) => {
         const { name, value } = event.currentTarget;
         this.setState({
             [name]: value,
@@ -57,5 +51,10 @@ export class Searchbar extends Component {
             </form>
             </header>
         );
+    };
+
+    Searchbar.propTypes = {
+        onSubmit: PropTypes.func.isRequired,
+        toastInfo: PropTypes.func.isRequired,
     };
 };
