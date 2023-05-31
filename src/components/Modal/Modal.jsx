@@ -7,10 +7,10 @@ export const Modal = ({ data, onToggleModal }) => {
 
   useEffect(() => {
   const handleKeyDown = (event) => {
-    if (event.key === 'Escape') {
-      onToggleModal();
-    }
-  };
+  if (event?.code === "Escape") {
+    onToggleModal();
+  }
+};
 
   window.addEventListener('keydown', handleKeyDown);
 

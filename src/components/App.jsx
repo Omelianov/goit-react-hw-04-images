@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {Searchbar} from './Searchbar/Searchbar';
-import {ImageGallery} from './ImageGallery/ImageGallery';
+import { Searchbar } from './Searchbar/Searchbar';
+import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Button } from './Button/Button';
-import {Modal} from './Modal/Modal';
+import { Modal } from './Modal/Modal';
 import { ErrorImg } from "./ErrorImg/ErrorImg";
 import { MagnifyingGlass } from 'react-loader-spinner';
 import { fetchImages } from "../api";
@@ -17,9 +17,10 @@ const App = () => {
   const [largeImageData, setLargeImageData] = useState({});
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isError, setIsError] = useState(false)
+  const [isError, setIsError] = useState(false);
+  const [showBTN, setShowBTN] = useState(false);
 
-useEffect(() => {
+  useEffect(() => {
     const fetchData = async () => {
       if (text.trim() === '') {
         toastInfoNothing();
@@ -42,12 +43,15 @@ useEffect(() => {
             largeImageURL,
           }));
 
-        if (page === 1 && hits.length > 1) {
-          toastSuccess();
-        }
-          
-        setImages(prevImages => [...prevImages, ...onlyNeedValues]);
+          if (page === 1 && hits.length > 1) {
+            toastSuccess();
+          }
+
+          setImages(prevImages => [...prevImages, ...onlyNeedValues]);
           setIsError(false);
+
+          const totalPages = Math.ceil(totalHits / 12);
+          setShowBTN(page < totalPages);
         }
       } catch (error) {
         toastError();
@@ -92,32 +96,32 @@ useEffect(() => {
         source,
         alt,
       });
-    } else if (nodeName === 'DIV' || code === "Escape") {
+    } else if (nodeName === 'DIV' || code === 'Escape') {
       setIsModalOpen(false);
     }
   };
 
-const toastSuccess = () => {
-return toast.success("Hooray! We found what you were looking for 🤗", toastSettings);
-};
+  const toastSuccess = () => {
+    return toast.success("Hooray! We found what you were looking for 🤗", toastSettings);
+  };
 
-const toastInfoNothing = () => {
-return toast.info("It looks like you want to find nothing, please check your query 😕", toastSettings);
-};
+  const toastInfoNothing = () => {
+    return toast.info("It looks like you want to find nothing, please check your query 😕", toastSettings);
+  };
 
-const toastInfoDuplication = () => {
-return toast.info("It looks like there are already pictures found for your request, please check if this will be a new search 🤔", toastSettings);
-};
+  const toastInfoDuplication = () => {
+    return toast.info("It looks like there are already pictures found for your request, please check if this will be a new search 🤔", toastSettings);
+  };
 
-const toastWarn = () => {
-return toast.warn("Sorry, nothing was found for your request, try something else 🙈", toastSettings);
-};
+  const toastWarn = () => {
+    return toast.warn("Sorry, nothing was found for your request, try something else 🙈", toastSettings);
+  };
 
-const toastError = () => {
-return toast.error("Oops, something went wrong, please try again 🙊", toastSettings);
-};
+  const toastError = () => {
+    return toast.error("Oops, something went wrong, please try again 🙊", toastSettings);
+  };
 
-return (
+  return (
     <>
       <Searchbar onSubmit={searchImages} toastInfo={toastInfoNothing} />
       {isError ? <ErrorImg errorImg={img} /> : images.length > 0 && <ImageGallery allImages={images} onToggleModal={toggleModal} />}
@@ -132,9 +136,15 @@ return (
           glassColor="#b4dcea"
           color="#354391"
         />
-      ) : images.length > 0 && <Button text="Load more" type="button" loadMoreImages={loadMoreImages} />}
-      {isModalOpen && <Modal data={largeImageData} onToggleModal={toggleModal} />}
-      <ToastContainer autoClose={3000} />
+      ) : (
+        <>
+          {isModalOpen && <Modal data={largeImageData} onToggleModal={toggleModal} />}
+          <ToastContainer autoClose={3000} />
+          {showBTN && images.length >= 12 && images.length % 12 === 0 && (
+            <Button text="Load more" type="button" loadMoreImages={loadMoreImages} />
+          )}
+        </>
+      )}
     </>
   );
 };
