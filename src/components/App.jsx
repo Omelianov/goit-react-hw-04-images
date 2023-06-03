@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { toast, ToastContainer } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
@@ -9,6 +9,13 @@ import { ErrorImg } from "./ErrorImg/ErrorImg";
 import { MagnifyingGlass } from 'react-loader-spinner';
 import { fetchImages } from "../api";
 import img from '../images/img-not-found.jpg'
+import {
+  showSuccessToast,
+  showInfoNothingToast,
+  showInfoDuplicationToast,
+  showWarnToast,
+  showErrorToast,
+} from '../toastSettings';
 
 const App = () => {
   const [text, setText] = useState('');
@@ -21,11 +28,11 @@ const App = () => {
   const [showBTN, setShowBTN] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (text.trim() === '') {
-        toastInfoNothing();
+     if (text.trim() === '') {
+        showInfoNothingToast();
         return;
       }
+    const fetchData = async () => {
 
       setLoading(true);
       try {
@@ -33,9 +40,9 @@ const App = () => {
         const { totalHits, hits } = result;
 
         if (totalHits === 0) {
-          toastWarn();
-          setIsError(true);
-        } else {
+          showWarnToast();
+          return;
+        }  {
           const onlyNeedValues = hits.map(({ id, tags, webformatURL, largeImageURL }) => ({
             id,
             tags,
@@ -44,7 +51,7 @@ const App = () => {
           }));
 
           if (page === 1 && hits.length > 1) {
-            toastSuccess();
+            showSuccessToast();
           }
 
           setImages(prevImages => [...prevImages, ...onlyNeedValues]);
@@ -54,7 +61,7 @@ const App = () => {
           setShowBTN(page < totalPages);
         }
       } catch (error) {
-        toastError();
+        showErrorToast();
       }
 
       setLoading(false);
@@ -63,13 +70,11 @@ const App = () => {
     fetchData();
   }, [text, page]);
 
-  const toastSettings = {
-    theme: "colored",
-  };
+
 
   const searchImages = newText => {
     if (text === newText.trim()) {
-      toastInfoDuplication();
+      showInfoDuplicationToast();
       return;
     }
 
@@ -83,47 +88,32 @@ const App = () => {
   };
 
   const toggleModal = (event) => {
-    const { code } = event;
-    const { nodeName, dataset: { source }, alt } = event.target;
+  if (!event) {
+    setIsModalOpen(false);
+    return;
+  }
 
-    if (nodeName === 'IMG') {
-      if (isModalOpen) {
-        return;
-      }
+  const { nodeName, dataset: { source }, alt } = event.target;
 
-      setIsModalOpen(true);
-      setLargeImageData({
-        source,
-        alt,
-      });
-    } else if (nodeName === 'DIV' || code === 'Escape') {
-      setIsModalOpen(false);
+  if (nodeName === 'IMG') {
+    if (isModalOpen) {
+      return;
     }
-  };
 
-  const toastSuccess = () => {
-    return toast.success("Hooray! We found what you were looking for 🤗", toastSettings);
-  };
+    setIsModalOpen(true);
+    setLargeImageData({
+      source,
+      alt,
+    });
+  } else if (nodeName !== 'INPUT') {
+    setIsModalOpen(false);
+  }
+};
 
-  const toastInfoNothing = () => {
-    return toast.info("It looks like you want to find nothing, please check your query 😕", toastSettings);
-  };
-
-  const toastInfoDuplication = () => {
-    return toast.info("It looks like there are already pictures found for your request, please check if this will be a new search 🤔", toastSettings);
-  };
-
-  const toastWarn = () => {
-    return toast.warn("Sorry, nothing was found for your request, try something else 🙈", toastSettings);
-  };
-
-  const toastError = () => {
-    return toast.error("Oops, something went wrong, please try again 🙊", toastSettings);
-  };
 
   return (
     <>
-      <Searchbar onSubmit={searchImages} toastInfo={toastInfoNothing} />
+      <Searchbar onSubmit={searchImages} toastInfo={showInfoNothingToast} />
       {isError ? <ErrorImg errorImg={img} /> : images.length > 0 && <ImageGallery allImages={images} onToggleModal={toggleModal} />}
       {loading ? (
         <MagnifyingGlass
@@ -140,7 +130,7 @@ const App = () => {
         <>
           {isModalOpen && <Modal data={largeImageData} onToggleModal={toggleModal} />}
           <ToastContainer autoClose={3000} />
-          {showBTN && images.length >= 12 && images.length % 12 === 0 && (
+          {showBTN && (
             <Button text="Load more" type="button" loadMoreImages={loadMoreImages} />
           )}
         </>
