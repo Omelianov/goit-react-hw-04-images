@@ -3,13 +3,13 @@ import PropTypes from 'prop-types';
 
 export const ImageGalleryItem = ({ image: { tags, webformatURL, largeImageURL }, onToggleModal }) => {
   const handleToggleModal = () => {
-    onToggleModal(webformatURL, tags);
+    onToggleModal(largeImageURL, tags);
   };
   return (
     <li className="ImageGalleryItem">
       <img
         className="ImageGalleryItem-image"
-        src={webformatURL}
+        src={largeImageURL}
         data-source={largeImageURL}
         alt={tags}
         onClick={handleToggleModal}

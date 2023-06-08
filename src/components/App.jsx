@@ -91,7 +91,7 @@ const App = () => {
   };
 
   const toggleModal = (largeImageURL, tags) => {
-  setLargeImageData({ imageURL: largeImageURL, tags: tags });
+  setLargeImageData({ imageURL: largeImageURL, alt: tags });
   setIsModalOpen(prevState => !prevState);
 };
 
