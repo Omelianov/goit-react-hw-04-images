@@ -16,8 +16,14 @@ export const Modal = ({ imageURL, tags, onToggleModal }) => {
     };
   }, [onToggleModal]);
 
+  const CloseModalClickOnOverlay = event => {
+    if (event.target === event.currentTarget) {
+      onToggleModal();
+    }
+  };
+
   return (
-    <div className="Overlay" onClick={onToggleModal} tabIndex={0}>
+    <div className="Overlay" onClick={CloseModalClickOnOverlay} tabIndex={0}>
       <div className="Modal">
         <img src={imageURL} alt={tags} />
       </div>
