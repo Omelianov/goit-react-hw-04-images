@@ -42,7 +42,7 @@ const App = () => {
         if (totalHits === 0) {
           showWarnToast();
           return;
-        }  {
+        }  
           const onlyNeedValues = hits.map(({ id, tags, webformatURL, largeImageURL }) => ({
             id,
             tags,
@@ -55,16 +55,17 @@ const App = () => {
           }
 
           setImages(prevImages => [...prevImages, ...onlyNeedValues]);
-          setIsError(false);
+        
 
           const totalPages = Math.ceil(totalHits / 12);
           setShowBTN(page < totalPages);
-        }
+        
       } catch (error) {
         showErrorToast();
-      }
 
-      setLoading(false);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchData();
@@ -78,6 +79,8 @@ const App = () => {
       return;
     }
 
+    setIsError(false);
+
     setText(newText);
     setPage(1);
     setImages([]);
@@ -87,27 +90,9 @@ const App = () => {
     setPage(prevPage => prevPage + 1);
   };
 
-  const toggleModal = (event) => {
-  if (!event) {
-    setIsModalOpen(false);
-    return;
-  }
-
-  const { nodeName, dataset: { source }, alt } = event.target;
-
-  if (nodeName === 'IMG') {
-    if (isModalOpen) {
-      return;
-    }
-
-    setIsModalOpen(true);
-    setLargeImageData({
-      source,
-      alt,
-    });
-  } else if (nodeName !== 'INPUT') {
-    setIsModalOpen(false);
-  }
+  const toggleModal = (largeImageURL, tags) => {
+  setLargeImageData({ imageURL: largeImageURL, tags: tags });
+  setIsModalOpen(prevState => !prevState);
 };
 
 
@@ -128,7 +113,9 @@ const App = () => {
         />
       ) : (
         <>
-          {isModalOpen && <Modal data={largeImageData} onToggleModal={toggleModal} />}
+          {isModalOpen && (
+  <Modal imageURL={largeImageData.imageURL} tags={largeImageData.tags} onToggleModal={toggleModal} />
+)}
           <ToastContainer autoClose={3000} />
           {showBTN && (
             <Button text="Load more" type="button" loadMoreImages={loadMoreImages} />

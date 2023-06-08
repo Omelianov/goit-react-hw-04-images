@@ -2,6 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 export const ImageGalleryItem = ({ image: { tags, webformatURL, largeImageURL }, onToggleModal }) => {
+  const handleToggleModal = () => {
+    onToggleModal(webformatURL, tags);
+  };
   return (
     <li className="ImageGalleryItem">
       <img
@@ -9,7 +12,7 @@ export const ImageGalleryItem = ({ image: { tags, webformatURL, largeImageURL },
         src={webformatURL}
         data-source={largeImageURL}
         alt={tags}
-        onClick={onToggleModal}
+        onClick={handleToggleModal}
       />
     </li>
   );
