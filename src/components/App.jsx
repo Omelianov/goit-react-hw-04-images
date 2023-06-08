@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Button } from './Button/Button';
 import { Modal } from './Modal/Modal';
 import { ErrorImg } from "./ErrorImg/ErrorImg";
-import { MagnifyingGlass } from 'react-loader-spinner';
+import LoadingSpinner from './Loader/MagnifyingGlass';
 import { fetchImages } from "../api";
 import img from '../images/img-not-found.jpg'
 import {
@@ -99,29 +97,17 @@ const App = () => {
   return (
     <>
       <Searchbar onSubmit={searchImages} toastInfo={showInfoNothingToast} />
+      <div style={{ marginTop: '10px' }}></div>
       {isError ? <ErrorImg errorImg={img} /> : images.length > 0 && <ImageGallery allImages={images} onToggleModal={toggleModal} />}
-      {loading ? (
-        <MagnifyingGlass
-          visible={true}
-          height="80"
-          width="80"
-          ariaLabel="MagnifyingGlass-loading"
-          wrapperStyle={{}}
-          wrapperClass="MagnifyingGlass-wrapper"
-          glassColor="#b4dcea"
-          color="#354391"
-        />
-      ) : (
-        <>
+      {loading &&
+        <LoadingSpinner />}
+      <div style={{ marginTop: '10px' }}></div>
           {isModalOpen && (
   <Modal imageURL={largeImageData.imageURL} tags={largeImageData.tags} onToggleModal={toggleModal} />
 )}
-          <ToastContainer autoClose={3000} />
-          {showBTN && (
+          {showBTN && 
             <Button text="Load more" type="button" loadMoreImages={loadMoreImages} />
-          )}
-        </>
-      )}
+          }
     </>
   );
 };
